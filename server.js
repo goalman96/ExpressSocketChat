@@ -13,11 +13,14 @@ const {
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-const botName = 'ChatCord Bot';
+const botName = 'Chat Bot';
 
 // Run when client connects
 io.on('connection', socket => {
@@ -27,21 +30,16 @@ io.on('connection', socket => {
     socket.join(user.room);
 
     // Welcome current user
-    socket.emit('message', formatMessage(botName, 'Welcome to ChatCord!'));
+    socket.emit('message', formatMessage(botName, 'Welcome to Chat!'));
 
     // Broadcast when a user connects
-    socket.broadcast
-      .to(user.room)
-      .emit(
+    socket.broadcast.to(user.room).emit(
         'message',
         formatMessage(botName, `${user.username} has joined the chat`)
       );
 
     // Send users and room info
-    io.to(user.room).emit('roomUsers', {
-      room: user.room,
-      users: getRoomUsers(user.room)
-    });
+    io.to(user.room).emit('roomUsers', {room: user.room, users: getRoomUsers(user.room)});
   });
 
   // Listen for chatMessage
@@ -69,7 +67,3 @@ io.on('connection', socket => {
     }
   });
 });
-
-const PORT = process.env.PORT || 3000;
-
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
