@@ -1,5 +1,5 @@
 const client = axios.create({
-	baseURL: 'http://localhost:3000',
+	baseURL: 'https://radiant-reef-83484.herokuapp.com',
 	timeout: 1000
 });
 
