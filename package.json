@@ -1,5 +1,5 @@
 {
-  "name": "chat",
+  "name": "expreschat",
   "version": "1.0.0",
   "description": "Realtime chat app with rooms",
   "main": "server.js",
@@ -10,6 +10,7 @@
   "author": "Brad Traversy",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.21.1",
     "express": "^4.17.1",
     "moment": "^2.24.0",
     "pg": "^8.6.0",

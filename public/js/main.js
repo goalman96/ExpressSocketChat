@@ -10,39 +10,56 @@ const { username, room } = Qs.parse(location.search, {
 
 const socket = io();
 
+getRoom(room).then((response) => {
+    outputRoomName(response.data.name)
+  }).catch((e) => {
+    console.debug(e)
+})
+
+getRoomMessages(room).then((response) => {
+    response.data.forEach(message => {
+      outputMessage(message)
+    })
+  }).catch((e) => {
+    console.debug(e)
+})
+
 // Join chatroom
 socket.emit('joinRoom', { username, room });
 
 // Get room and users
-socket.on('roomUsers', ({ room, users }) => {
-  outputRoomName(room);
+socket.on('roomUsers', ({ users }) => {
   outputUsers(users);
 });
 
 // Message from server
 socket.on('message', (message) => {
-  console.log(message);
   outputMessage(message);
-
   // Scroll down
   chatMessages.scrollTop = chatMessages.scrollHeight;
 });
 
 // Message submit
-chatForm.addEventListener('submit', (e) => {
+chatForm.addEventListener('submit', async (e) => {
   e.preventDefault();
 
   // Get message text
-  let msg = e.target.elements.msg.value;
+  let message = e.target.elements.msg.value;
 
-  msg = msg.trim();
+  message = message.trim();
 
-  if (!msg) {
+  if (!message) {
     return false;
   }
 
   // Emit message to server
-  socket.emit('chatMessage', msg);
+  socket.emit('chatMessage', message);
+
+  // save message into database
+  const formattedMessage = formatMessage(message);
+  await saveMessage(formattedMessage).catch((e) => {
+    console.debug(e)
+  })
 
   // Clear input
   e.target.elements.msg.value = '';
@@ -78,6 +95,14 @@ function outputUsers(users) {
     li.innerText = user.username;
     userList.appendChild(li);
   });
+}
+
+function formatMessage(text) {
+  return {
+    text,
+    username,
+    roomId: room
+  }
 }
 
 //Prompt the user before leave chat room
