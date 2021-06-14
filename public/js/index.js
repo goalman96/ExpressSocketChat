@@ -1,11 +1,13 @@
 
 
 getRooms().then((response) => {
-	response.data.forEach(room => {
-		addRoom(room)
-	}).catch((e) => {
+	if (response.data.length) {
+		response.data.forEach(room => {
+			addRoom(room)
+		})
+	}
+}).catch((e) => {
 		console.debug(e)
-	})
 })
 
 function addRoom(room) {

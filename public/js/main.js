@@ -17,14 +17,14 @@ getRoom(room).then((response) => {
 })
 
 getRoomMessages(room).then((response) => {
-    if (response.data.length) {
-      response.data.forEach(message => {
-        outputMessage(message)
-      })
-    }
-  }).catch((e) => {
-    console.debug(e)
-  })
+  if (response.data.length) {
+    response.data.forEach(message => {
+      outputMessage(message)
+    })
+  }
+}).catch((e) => {
+  console.debug(e)
+})
 
 // Join chatroom
 socket.emit('joinRoom', { username, room });
